@@ -46,10 +46,9 @@ class Sudoku:
         block_index = (y // 3) * 3 + x // 3
         block_set = set(self.block_values(block_index))
 
-        # original_options
-        options = {1, 2, 3, 4, 5, 6, 7, 8, 9}
         # find values that are in left as options
-        options = list(options - col_set - row_set - block_set)
+        options = list(
+            {1, 2, 3, 4, 5, 6, 7, 8, 9} - col_set - row_set - block_set)
 
         return options
 
