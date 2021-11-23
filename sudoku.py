@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Iterable, Sequence
+from typing import Iterable
 
 
 class Sudoku:
@@ -19,14 +19,7 @@ class Sudoku:
     def place(self, value: int, x: int, y: int) -> None:
         """Place value at x,y."""
         row = self._grid[y]
-        new_row = ""
-
-        for i in range(9):
-            if i == x:
-                new_row += str(value)
-            else:
-                new_row += row[i]
-
+        new_row = row[:x] + str(value) + row[x + 1:]
         self._grid[y] = new_row
 
     def unplace(self, x: int, y: int) -> None:
@@ -37,37 +30,26 @@ class Sudoku:
 
     def value_at(self, x: int, y: int) -> int:
         """Returns the value at x,y."""
-        value = -1
-
-        for i in range(9):
-            for j in range(9):
-                if i == x and j == y:
-                    row = self._grid[y]
-                    value = int(row[x])
+        row = self._grid[y]
+        value = int(row[x])
 
         return value
 
     def options_at(self, x: int, y: int) -> Iterable[int]:
         """Returns all possible values (options) at x,y."""
-        options = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
-        # Remove all values from the row
-        for value in self.row_values(y):
-            if value in options:
-                options.remove(value)
+        # transform row and cols list to set
+        col_set = set(self.column_values(x))
+        row_set = set(self.row_values(y))
 
-        # Remove all values from the column
-        for value in self.column_values(x):
-            if value in options:
-                options.remove(value)
-
-        # Get the index of the block based from x,y
+        # transform block list to set
         block_index = (y // 3) * 3 + x // 3
+        block_set = set(self.block_values(block_index))
 
-        # Remove all values from the block
-        for value in self.block_values(block_index):
-            if value in options:
-                options.remove(value)
+        # original_options
+        options = {1, 2, 3, 4, 5, 6, 7, 8, 9}
+        # find values that are in left as options
+        options = list(options - col_set - row_set - block_set)
 
         return options
 
@@ -80,17 +62,18 @@ class Sudoku:
 
         for y in range(9):
             for x in range(9):
-                if self.value_at(x, y) == 0 and next_x == -1 and next_y == -1:
+                if self.value_at(x, y) == 0:
                     next_x, next_y = x, y
+                    return next_x, next_y
 
         return next_x, next_y
 
     def row_values(self, i: int) -> Iterable[int]:
         """Returns all values at i-th row."""
-        values = []
 
-        for j in range(9):
-            values.append(self.value_at(j, i))
+        # retrieve row from grid and transform to list with integers
+        row = self._grid[i]
+        values = list(map(int, row))
 
         return values
 
@@ -111,14 +94,14 @@ class Sudoku:
         3 4 5
         6 7 8
         """
-        values = []
+        values: list[int] = []
 
         x_start = (i % 3) * 3
         y_start = (i // 3) * 3
 
-        for x in range(x_start, x_start + 3):
-            for y in range(y_start, y_start + 3):
-                values.append(self.value_at(x, y))
+        for i in range(3):
+            row = self._grid[y_start + i]
+            values = values + list(map(int, row))[x_start:x_start+3]
 
         return values
 
@@ -127,22 +110,16 @@ class Sudoku:
         Returns True if and only if all rows, columns and blocks contain
         only the numbers 1 through 9. False otherwise.
         """
-        values = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-
-        result = True
 
         for i in range(9):
-            for value in values:
-                if value not in self.column_values(i):
-                    result = False
+            if len(set(self.column_values(i))) != 9:
+                return False
+            if len(set(self.row_values(i))) != 9:
+                return False
+            if len(set(self.block_values(i))) != 9:
+                return False
 
-                if value not in self.row_values(i):
-                    result = False
-
-                if value not in self.block_values(i):
-                    result = False
-
-        return result
+        return True
 
     def __str__(self) -> str:
         representation = ""

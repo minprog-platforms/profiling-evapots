@@ -2,9 +2,9 @@ import sys
 import os
 sys.path.append(os.path.abspath('.'))
 
-import pytest  # noqa: E402 # ignore that this import is not top-level
+import pytest  # noqa: E402
 
-from sudoku import Sudoku  # noqa: E402 # ignore that this import is not top-level
+from sudoku import Sudoku  # noqa: E402
 
 
 @pytest.fixture
@@ -72,15 +72,15 @@ def test_row_values(sudoku1):
 
 
 def test_column_values(sudoku1):
-    assert list(sorted(sudoku1.column_values(0))) == [0, 0, 0, 0, 0, 4, 6, 7, 8]
-    assert list(sorted(sudoku1.column_values(3))) == [0, 0, 0, 0, 0, 0, 3, 4, 7]
-    assert list(sorted(sudoku1.column_values(8))) == [0, 0, 0, 0, 1, 2, 4, 6, 8]
+    assert list(sorted(sudoku1.column_values(0))) == [0, 0, 0, 0, 0, 4, 6, 7, 8]  # noqa: E501  
+    assert list(sorted(sudoku1.column_values(3))) == [0, 0, 0, 0, 0, 0, 3, 4, 7]  # noqa: E501
+    assert list(sorted(sudoku1.column_values(8))) == [0, 0, 0, 0, 1, 2, 4, 6, 8]  # noqa: E501
 
 
 def test_block_values(sudoku1):
-    assert list(sorted(sudoku1.block_values(0))) == [0, 0, 0, 0, 0, 0, 7, 8, 9]
-    assert list(sorted(sudoku1.block_values(3))) == [0, 0, 0, 0, 0, 0, 0, 4, 5]
-    assert list(sorted(sudoku1.block_values(8))) == [0, 0, 0, 0, 0, 0, 4, 5, 8]
+    assert list(sorted(sudoku1.block_values(0))) == [0, 0, 0, 0, 0, 0, 7, 8, 9]  # noqa E501
+    assert list(sorted(sudoku1.block_values(3))) == [0, 0, 0, 0, 0, 0, 0, 4, 5]  # noqa E501
+    assert list(sorted(sudoku1.block_values(8))) == [0, 0, 0, 0, 0, 0, 4, 5, 8]  # noqa E501
 
 
 def test_is_solved(sudoku1, sudoku2, sudoku1_solved):
